@@ -13,7 +13,8 @@ public class UsersDTORequest{
     @Pattern(regexp = "^[A-Za-z0-9]{6,8}$", message = "{app.password.invalido}")
     private String password;
     @Email(message = "{app.email.invalido}")
-    //Esse é válido melhor que o do Spring Boot
+    //Este válidador é melhor que o do Spring Boot, porém deixa sujeira no swagger.
     //@Pattern(regexp = "^[a-zA-Z0-9._%+-]+@.+\\..+$", message = "{app.email.invalido}")
     private String email;
+
 }

@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.TaskDTORequest;
 import com.example.demo.dto.TaskDTOResponse;
+import com.example.demo.dto.UsersDTORequest;
 import com.example.demo.entity.Tasks;
 import com.example.demo.entity.Users;
 import com.example.demo.repository.TaskRepository;
@@ -27,6 +28,8 @@ public class TaskService {
 
     @Transactional(readOnly = false)
     public TaskDTOResponse criarTask(TaskDTORequest taskDTO, BindingResult validacao) {
+
+        validaUser(taskDTO.getUsers());
 
         validaTask(validacao);
 
@@ -61,6 +64,8 @@ public class TaskService {
     @Transactional(readOnly = false)
     public TaskDTOResponse atualizaTask(Integer id, TaskDTORequest taskDTO, BindingResult validacao){
 
+        validaUser(taskDTO.getUsers());
+
         validaTask(validacao);
 
         Tasks taskParaAtualiza = repository.findById(id).orElseThrow(()->
@@ -92,5 +97,9 @@ public class TaskService {
                         throw new RegraDeNegocioException(validacao.getFieldError().getDefaultMessage());
             }
         }
+    }
+    private void validaUser(UsersDTORequest userDTO){
+        if(userDTO == null)
+            throw new RegraDeNegocioException("Os dados do user não pode ser nulos.");
     }
 }

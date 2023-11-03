@@ -38,7 +38,7 @@ public class UsersService {
     @Transactional(readOnly = true)
     public UsersDTOResponse obterUserPorId(Integer id){
         return new UsersDTOResponse(repository.findById(id).orElseThrow(()->
-                new RecursoNaoEncontrado("O ID do user não foi encontrado!")));
+                new RecursoNaoEncontrado("O ID do user não foi encontrada no banco de dados!")));
     }
 
     @Transactional(readOnly = false)
@@ -47,7 +47,7 @@ public class UsersService {
             validaUser(validacao);
 
             Users userAtualizado = repository.findById(id).orElseThrow(()->
-                    new RecursoNaoEncontrado("O ID do user não foi encontrado!"));
+                    new RecursoNaoEncontrado("O ID do user não foi encontrada no banco de dados!"));
 
             userAtualizado.setName(userDTO.getName());
             userAtualizado.setPassword(userDTO.getPassword());
@@ -62,7 +62,7 @@ public class UsersService {
     @Transactional(readOnly = false)
     public void removeUSer(Integer id){
         Users userParaRemocao = repository.findById(id).orElseThrow(()->
-                new RecursoNaoEncontrado("O ID do user não foi encontrado!"));
+                new RecursoNaoEncontrado("O ID do não foi encontrada no banco de dados!"));
         repository.delete(userParaRemocao);
     }
 
