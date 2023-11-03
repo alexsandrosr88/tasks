@@ -4,11 +4,15 @@ import com.example.demo.dto.UsersDTORequest;
 import com.example.demo.dto.UsersDTOResponse;
 import com.example.demo.entity.Users;
 import com.example.demo.repository.UsersRepository;
+import com.example.demo.service.exception.RecursoNaoEncontrado;
+import com.example.demo.service.exception.RegraDeNegocioException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UsersService {
@@ -17,11 +21,12 @@ public class UsersService {
     private UsersRepository repository;
 
     @Transactional(readOnly = false)
-    public UsersDTOResponse criarUser(UsersDTORequest userDTO){
-        if (userDTO != null){
-            return new UsersDTOResponse(repository.save(new Users(userDTO)));
-        }
-        throw new RuntimeException();
+    public UsersDTOResponse criarUser(UsersDTORequest userDTO, BindingResult validacao){
+
+        validaUser(validacao);
+
+        return new UsersDTOResponse(repository.save(new Users(userDTO)));
+
     }
 
     @Transactional(readOnly = true)
@@ -31,29 +36,45 @@ public class UsersService {
                 .toList();
     }
     @Transactional(readOnly = true)
-    public UsersDTOResponse obterUmUser(Integer id){
-        return new UsersDTOResponse(repository.findById(id).orElseThrow());
+    public UsersDTOResponse obterUserPorId(Integer id){
+        return new UsersDTOResponse(repository.findById(id).orElseThrow(()->
+                new RecursoNaoEncontrado("O ID do user não foi encontrado!")));
     }
 
     @Transactional(readOnly = false)
-    public UsersDTOResponse atualizaUser(Integer id, UsersDTORequest userDTO){
-        if(userDTO != null || id != null) {
-            Users userAtualizado = repository.findById(id).orElseThrow();
+    public UsersDTOResponse atualizaUser(Integer id, UsersDTORequest userDTO, BindingResult validacao){
+
+            validaUser(validacao);
+
+            Users userAtualizado = repository.findById(id).orElseThrow(()->
+                    new RecursoNaoEncontrado("O ID do user não foi encontrado!"));
 
             userAtualizado.setName(userDTO.getName());
             userAtualizado.setPassword(userDTO.getPassword());
             userAtualizado.setEmail(userDTO.getEmail());
-            return new UsersDTOResponse(repository.save(userAtualizado));
-        }
 
-        throw new RuntimeException();
+            return new UsersDTOResponse(repository.saveAndFlush(userAtualizado));
+
+
+
 
     }
     @Transactional(readOnly = false)
     public void removeUSer(Integer id){
-        Users userParaRemocao = repository.findById(id).orElseThrow();
+        Users userParaRemocao = repository.findById(id).orElseThrow(()->
+                new RecursoNaoEncontrado("O ID do user não foi encontrado!"));
         repository.delete(userParaRemocao);
     }
 
+    private void validaUser(BindingResult validacao){
+        if(validacao.hasErrors()){
+            String campo = Objects.requireNonNull(validacao.getFieldError()).getField();
+
+            switch (campo) {
+                case "name", "password", "email" ->
+                        throw new RegraDeNegocioException(validacao.getFieldError().getDefaultMessage());
+            }
+        }
+    }
 
 }
