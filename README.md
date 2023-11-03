@@ -22,7 +22,7 @@
 - Mysql
 
 # Instruções para uso
-    Antes de começar a aplicação, vá até a pasta 'resources' e encontre o arquivo 'application.properties'. Nesse arquivo, você precisará fazer duas alterações. Na linha 2, insira o nome de usuário do seu banco de dados e, na linha 3, a senha correspondente. Você não precisa modificar a linha 5, pois basta cadastrar um usuário com permissões para criar um banco, já que o comando de criação do banco foi incluído na linha 1, caso ele não exista.
+- Antes de começar a aplicação, vá até a pasta 'resources' e encontre o arquivo 'application.properties'. Nesse arquivo, você precisará fazer duas alterações. Na linha 2, insira o nome de usuário do seu banco de dados e, na linha 3, a senha correspondente. Você não precisa modificar a linha 5, pois basta cadastrar um usuário com permissões para criar um banco, já que o comando de criação do banco foi incluído na linha 1, caso ele não exista.
 
 # URL para teste
 
